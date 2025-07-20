@@ -1,0 +1,16 @@
+{% extends 'todo_list/base.html' %}
+
+{% block title %}
+TODO #{{ object.pk}}
+{%endblock title %}
+
+{% block body %}
+<h3>ToDo</h3>
+<div>
+  <div>Title: <strong>{{ object.title }}</strong></div>
+  {% if object.description %}
+  <div>Description: <strong>{{ object.description }}</strong></div>
+  {% endif %}
+  <div>Done: <strong>{{ object.done }}</strong></div>
+</div>
+{% endblock body %}
