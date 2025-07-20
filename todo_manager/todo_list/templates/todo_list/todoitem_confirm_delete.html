@@ -1,0 +1,20 @@
+{% extends 'todo_list/base.html' %}
+
+{% block title %}
+Delete ToDo #{{ object.id }}}
+{%endblock title %}
+
+{% block body %}
+<h2>Confirm delete {{ object.title }}</h2>
+<p>
+  Are you sure want to delete ToDO Item {{ object.title }}
+</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form }}
+  <button type="submit">Delete</button>
+</form>
+<div>
+  <a href="{% url 'todo_list:detail' object.pk %}">Back to ToDo Item details</a>
+</div>
+{% endblock body %}

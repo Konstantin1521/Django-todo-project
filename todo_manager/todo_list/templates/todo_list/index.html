@@ -9,6 +9,7 @@ TODO List Index
   <div>
     <a href="{% url 'todo_list:list' %}">All ToDo items</a>
     <a href="{% url 'todo_list:done' %}">Done ToDo items</a>
+    <a href="{% url 'todo_list:create' %}">Create new ToDo items</a>
   </div>
   <h2>ToDos</h2>
   {% include 'todo_list/components/todo_items_list.html' %}
