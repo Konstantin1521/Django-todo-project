@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from todo_list.models import ToDoItem
+from todo_list.models import ToDoItem, ToDoGroup
 
 @admin.register(ToDoItem)
 class ToDoItemAdmin(admin.ModelAdmin):
@@ -15,3 +15,9 @@ class ToDoItemAdmin(admin.ModelAdmin):
 
     def __str__(self) -> str:
         return self.title
+
+
+@admin.register(ToDoGroup)
+class ToDoGroupAdmin(admin.ModelAdmin):
+    list_display = "id", "name", "owner"
+    list_display_links = "id", "name"
