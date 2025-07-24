@@ -17,11 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.contrib.auth import views as auth_views
+
+from todo_list import views
 
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 urlpatterns = [
+    path('login/', auth_views.LoginView.as_view(template_name='todo_list/registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('register/', views.RegisterView.as_view(), name='register'),
     path('', TemplateView.as_view(template_name="index.html"), name="index"),
     path('todos/', include("todo_list.urls")),
     path('admin/', admin.site.urls),

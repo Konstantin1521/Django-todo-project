@@ -51,6 +51,10 @@ INSTALLED_APPS = [
     'debug_toolbar'
 ]
 
+LOGIN_REDIRECT_URL = 'index'  # Куда перенаправлять после логина
+LOGOUT_REDIRECT_URL = 'index'  # Куда перенаправлять после логаута
+LOGIN_URL = 'index'  # URL для редиректа неавторизованных пользователей
+
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
