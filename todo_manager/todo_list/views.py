@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     # TemplateView,
@@ -11,25 +11,46 @@ from django.views.generic import (
 )
 
 from .forms import ToDoItemCreateForm, ToDoItemUpdateForm
+from .mixins import UserQuerySetMixin, UserObjectPermissionMixin
 from .models import ToDoItem, ToDoGroup
 
 
-class ToDoListIndexView(ListView):
+from django.views.generic import CreateView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+
+
+class RegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'todo_list/registration/register.html'
+    success_url = reverse_lazy('todo_list:list')  # после успешной регистрации
+
+
+class ToDoListIndexView(LoginRequiredMixin, UserQuerySetMixin, ListView):
+    model = ToDoItem
     template_name = "todo_list/index.html"
-    queryset = ToDoItem.objects.filter(archived=False).all()[:3]
+
+    def get_queryset(self):
+        # Добавим фильтр по archive, а user фильтрация уже в миксине
+        qs = super().get_queryset()
+        return qs.filter(archived=False).all()[:3]
 
 
-class ToDoListView(ListView):
+class ToDoListView(LoginRequiredMixin, UserQuerySetMixin, ListView):
     template_name = "todo_list/index.html"
     model = ToDoItem
-    queryset = ToDoItem.objects.filter(archived=False)
+    def get_queryset(self):
+        # Добавим фильтр по archive, а user фильтрация уже в миксине
+        qs = super().get_queryset()
+        return qs.filter(archived=False)
 
-class ToDoListDoneView(ListView):
+
+class ToDoListDoneView(UserQuerySetMixin, ListView):
     queryset = ToDoItem.objects.filter(done=True, archived=False).all()
 
 
-class ToDoDetailView(DetailView):
-    # model = ToDoItem
+class ToDoDetailView(LoginRequiredMixin, UserObjectPermissionMixin, DetailView):
+    model = ToDoItem
     queryset = ToDoItem.objects.filter(archived=False)
 
 class TodoItemCreateView(LoginRequiredMixin, CreateView):
@@ -54,16 +75,19 @@ class TodoItemCreateView(LoginRequiredMixin, CreateView):
             form.instance.group = default_group
         return super().form_valid(form)
 
-    # fields = ("title", "description",)
 
-
-class ToDoItemUpdateView(UpdateView):
+class ToDoItemUpdateView(LoginRequiredMixin, UserObjectPermissionMixin, UpdateView):
     template_name_suffix = "_update_form"
     model = ToDoItem
     form_class = ToDoItemUpdateForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаём текущего пользователя в форму
+        return kwargs
 
-class ToDoItemDeleteView(DeleteView):
+
+class ToDoItemDeleteView(LoginRequiredMixin, UserObjectPermissionMixin, DeleteView):
     model = ToDoItem
     success_url = reverse_lazy("todo_list:list")
 
