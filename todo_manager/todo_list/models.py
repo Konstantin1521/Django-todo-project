@@ -31,8 +31,8 @@ class ToDoItem(models.Model):
     description = models.TextField(max_length=250, null=True, blank=True)
     done = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    group = models.ForeignKey(ToDoGroup, on_delete=models.CASCADE, default=1)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,)
+    group = models.ForeignKey(ToDoGroup, on_delete=models.CASCADE, null=True, blank=True,)
 
     def get_absolute_url(self):
         return reverse(
