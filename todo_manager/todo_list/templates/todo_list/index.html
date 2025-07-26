@@ -7,10 +7,10 @@ TODO List Index
 {% block body %}
 <h1>ToDO List App!</h1>
   <div>
-    <a href="{% url 'todo_list:list' %}">All ToDo items</a>
     <a href="{% url 'todo_list:done' %}">Done ToDo items</a>
     <a href="{% url 'todo_list:create' %}">Create new ToDo items</a>
+    <a href="{% url 'todo_list:createGroup' %}">Create grouo</a>
   </div>
   <h2>ToDos</h2>
-  {% include 'todo_list/components/todo_items_list.html' %}
+  {% include 'todo_list/components/todo_items_list.html' with data=data  %}
 {% endblock body %}

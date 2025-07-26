@@ -1,14 +1,19 @@
 <ul>
-  {% for todo_item in object_list %}
-  <li>
-    <a href="{% url 'todo_list:detail' pk=todo_item.pk %}">
-      {{ todo_item.title }}
-      {% if todo_item.done %}
-      ✅
+{% for item in data %}
+  <h2>{{ item.group }}</h2>
+  {% if item.tasks %}
+    <ul>
+      {% for task in item.tasks %}
+        <li><a href="{% url 'todo_list:detail' pk=task.pk %}">{{ task.title }}</a>
+        {% if task.done %}
+        ✅
       {% else%}
       ❌
       {% endif %}
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>Нет задач</em></p>
+  {% endif %}
+{% endfor %}
