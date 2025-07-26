@@ -32,7 +32,7 @@ class ToDoItem(models.Model):
     done = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,)
-    group = models.ForeignKey(ToDoGroup, on_delete=models.CASCADE, null=True, blank=True,)
+    group = models.ForeignKey(ToDoGroup, on_delete=models.CASCADE, null=True, blank=True, related_name="tasks")
 
     def get_absolute_url(self):
         return reverse(

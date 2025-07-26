@@ -1,6 +1,13 @@
 from django.http import Http404
 
 
+class UserFormKwargsMixin:
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаём текущего пользователя в форму
+        return kwargs
+
+
 class UserQuerySetMixin:
     user_field = 'owner'
 
