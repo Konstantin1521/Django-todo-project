@@ -1,0 +1,14 @@
+{% extends 'todo_list/base.html' %}
+
+{% block title %}
+Login
+{%endblock title %}
+
+{% block body %}
+  <a href="{% url 'register' %}">Создать аккаунт</a>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Войти</button>
+</form>
+{% endblock %}

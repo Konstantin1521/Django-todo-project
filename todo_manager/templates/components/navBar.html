@@ -11,3 +11,9 @@
     </li>
   </ul>
 </nav>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+    <p>Текущий пользователь: {{ user.username }}</p>
+      <button type="submit">Выйти</button>
+</form>

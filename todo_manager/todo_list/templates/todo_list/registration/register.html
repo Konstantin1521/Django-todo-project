@@ -1,0 +1,14 @@
+{% extends 'todo_list/base.html' %}
+
+{% block title %}
+Registration
+{%endblock title %}
+
+{% block body %}
+  <a href="{% url 'login' %}">Уже есть аккаунт</a>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Зарегистрироваться</button>
+</form>
+{% endblock %}
