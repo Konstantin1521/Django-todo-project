@@ -1,19 +1,31 @@
-<ul>
-{% for item in data %}
-  <h2>{{ item.group }}</h2>
-  {% if item.tasks %}
-    <ul>
-      {% for task in item.tasks %}
-        <li><a href="{% url 'todo_list:detail' pk=task.pk %}">{{ task.title }}</a>
-        {% if task.done %}
-        ✅
-      {% else%}
-      ❌
-      {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p><em>Нет задач</em></p>
-  {% endif %}
-{% endfor %}
+{% block body %}
+  <h1 class="mb-4">Ваши задачи</h1>
+
+  {% for item in data %}
+    <div class="card mb-3">
+      <div class="card-header bg-primary text-white">
+        {{ item.group }}
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for task in item.tasks %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <a href="{% url 'todo_list:detail' pk=task.pk %}" class="text-decoration-none">{{ task.title }}</a>
+              {% if task.done %}
+                <span class="badge bg-success">✅</span>
+              {% else %}
+                <span class="badge bg-warning">❌</span>
+              {% endif %}
+            </div>
+            {% if not task.done %}
+              <form method="post" action="{% url 'todo_list:done_task' pk=task.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-success">Выполнить</button>
+              </form>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% endblock %}
