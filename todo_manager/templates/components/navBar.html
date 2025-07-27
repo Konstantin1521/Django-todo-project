@@ -1,19 +1,20 @@
-<nav>
-  <ul>
-    <li>
-      <a href="{% url 'index' %}">Home</a>
-    </li>
-    <li>
-      <a href="#">About</a>
-    </li>
-    <li>
-      <a href="{% url 'todo_list:index' %}">ToDo List</a>
-    </li>
-  </ul>
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'index' %}">ToDo App</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'todo_list:index' %}">ToDo List</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">О проекте</a>
+        </li>
+      </ul>
+      <form method="post" action="{% url 'logout' %}" class="d-flex">
+        {% csrf_token %}
+        <span class="me-2">👤 {{ user.username }}</span>
+        <button class="btn btn-outline-danger btn-sm" type="submit">Выйти</button>
+      </form>
+    </div>
+  </div>
 </nav>
-
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-    <p>Текущий пользователь: {{ user.username }}</p>
-      <button type="submit">Выйти</button>
-</form>
