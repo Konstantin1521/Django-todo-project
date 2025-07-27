@@ -14,4 +14,5 @@ urlpatterns = [
     path('done/', views.ToDoGroupTasksIndexViewDone.as_view(), name="done"),
     path('createGroup/', views.ToDoGroupCreateView.as_view(), name="createGroup"),
     path('create/', views.TodoItemCreateView.as_view(), name="create"),
+    path('edit/<int:pk>/', views.ToDoMarkDoneView.as_view(), name="done_task"),
 ]

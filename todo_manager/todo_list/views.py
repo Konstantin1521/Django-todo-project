@@ -9,6 +9,10 @@ from django.views.generic import (
     TemplateView,
 )
 
+from django.views import View
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .forms import ToDoItemCreateForm, ToDoItemUpdateForm, GroupCreateForm
 from .mixins import UserQuerySetMixin, UserObjectPermissionMixin, UserFormKwargsMixin
 from .models import ToDoItem, ToDoGroup
@@ -21,7 +25,7 @@ from django.urls import reverse_lazy
 class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'todo_list/registration/register.html'
-    success_url = reverse_lazy('todo_list:index')  # после успешной регистрации
+    success_url = reverse_lazy('login')  # после успешной регистрации
 
 
 class ToDoDetailView(LoginRequiredMixin, UserObjectPermissionMixin, DetailView):
@@ -38,10 +42,11 @@ class TodoItemCreateView(LoginRequiredMixin, UserFormKwargsMixin, CreateView):
         form.instance.owner = self.request.user
         # Если группа не выбрана, устанавливаем фиктивную группу "Без группы"
         if not form.instance.group:
-            default_group, created = ToDoGroup.objects.get_or_create(
-                name="Без группы",
-                owner=self.request.user
-            )
+            try:
+                default_group = ToDoGroup.objects.get(name="Без группы", owner=self.request.user)
+            except ToDoGroup.DoesNotExist:
+                raise ValueError("Не найдена группа 'Без группы' для пользователя!")
+
             form.instance.group = default_group
         return super().form_valid(form)
 
@@ -102,3 +107,11 @@ class ToDoGroupWithTasksIndexView(LoginRequiredMixin, BaseGroupTasksView):
 
 class ToDoGroupTasksIndexViewDone(LoginRequiredMixin, BaseGroupTasksView):
     task_filter = {"archived": False, "done": True}
+
+
+class ToDoMarkDoneView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        task = get_object_or_404(ToDoItem, pk=pk, owner=request.user)
+        task.done = True
+        task.save()
+        return redirect('todo_list:index')

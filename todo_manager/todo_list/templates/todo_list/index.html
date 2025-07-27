@@ -11,6 +11,5 @@ TODO List Index
     <a href="{% url 'todo_list:create' %}">Create new ToDo items</a>
     <a href="{% url 'todo_list:createGroup' %}">Create grouo</a>
   </div>
-  <h2>ToDos</h2>
   {% include 'todo_list/components/todo_items_list.html' with data=data  %}
 {% endblock body %}
