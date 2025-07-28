@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.constraints import UniqueConstraint
 from django.urls import reverse
 
-
+from django.utils import timezone
 class ToDoGroup(models.Model):
     class Meta:
         ordering = ("id", "name", "owner")
@@ -31,6 +31,8 @@ class ToDoItem(models.Model):
     description = models.TextField(max_length=250, null=True, blank=True)
     done = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
+    execute_time = models.DateTimeField(default=timezone.now)
+    remind_before = models.IntegerField(default=15)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,)
     group = models.ForeignKey(ToDoGroup, on_delete=models.CASCADE, null=True, blank=True, related_name="tasks")
 

@@ -1,9 +1,13 @@
-# todo_list/tasks.py
-
 from celery import shared_task
-from django.contrib.auth import get_user_model
+from .models import ToDoItem
 
 @shared_task
-def send_notification(user_id, message):
-    user = get_user_model().objects.get(id=user_id)
-    print(f"📬 Sending message to {user.username}: {message}")
+def send_task_reminder(task_id):
+    try:
+        task = ToDoItem.objects.get(id=task_id)
+        if not task.done:
+            print(f"Напоминание: задача '{task.title}' скоро должна быть выполнена!")
+        else:
+            print(f"Задача {task.title} уже выполнена — уведомление не отправляется.")
+    except ToDoItem.DoesNotExist:
+        print(f"Задача с ID {task_id} не найдена")

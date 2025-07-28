@@ -1,5 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import timedelta
+
 from django.http import HttpResponseRedirect
+from django.utils.timezone import now
 from django.views.generic import (
     ListView,
     DetailView,
@@ -20,6 +22,8 @@ from .models import ToDoItem, ToDoGroup
 
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
+
+from .tasks import send_task_reminder
 
 
 class RegisterView(CreateView):
@@ -48,7 +52,20 @@ class TodoItemCreateView(LoginRequiredMixin, UserFormKwargsMixin, CreateView):
                 raise ValueError("Не найдена группа 'Без группы' для пользователя!")
 
             form.instance.group = default_group
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        task = form.instance
+        notify_time = task.execute_time - timedelta(minutes=task.remind_before)
+
+        if notify_time > now():
+            send_task_reminder.apply_async(
+                args=[task.id],
+                eta=notify_time
+            )
+        else:
+            print("Время напоминания уже прошло — задача не ставится.")
+
+        return response
 
 
 class ToDoItemUpdateView(LoginRequiredMixin, UserFormKwargsMixin, UserObjectPermissionMixin, UpdateView):
