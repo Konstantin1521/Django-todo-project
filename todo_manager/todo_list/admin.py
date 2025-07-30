@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from todo_list.models import ToDoItem, ToDoGroup
+from todo_list.models import ToDoItem, ToDoGroup, TelegramProfile
+
 
 @admin.register(ToDoItem)
 class ToDoItemAdmin(admin.ModelAdmin):
@@ -21,3 +22,10 @@ class ToDoItemAdmin(admin.ModelAdmin):
 class ToDoGroupAdmin(admin.ModelAdmin):
     list_display = "id", "name", "owner"
     list_display_links = "id", "name"
+
+
+
+@admin.register(TelegramProfile)
+class ToDoGroupAdmin(admin.ModelAdmin):
+    list_display = "user", "tg_id",
+    list_display_links = "user", "tg_id"

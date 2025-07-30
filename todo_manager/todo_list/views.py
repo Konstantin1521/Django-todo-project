@@ -1,9 +1,10 @@
 from datetime import timedelta
 
+from django.db import IntegrityError, DatabaseError
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from django.utils.timezone import now
 from django.views.generic import (
-    ListView,
     DetailView,
     CreateView,
     UpdateView,
@@ -15,13 +16,13 @@ from django.views import View
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import ToDoItemCreateForm, ToDoItemUpdateForm, GroupCreateForm
-from .mixins import UserQuerySetMixin, UserObjectPermissionMixin, UserFormKwargsMixin
-from .models import ToDoItem, ToDoGroup
 
+from .forms import ToDoItemCreateForm, ToDoItemUpdateForm, GroupCreateForm
+from .mixins import UserObjectPermissionMixin, UserFormKwargsMixin
+from .models import ToDoItem, ToDoGroup, TelegramProfile
 
 from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from .tasks import send_task_reminder
 
@@ -129,6 +130,50 @@ class ToDoGroupTasksIndexViewDone(LoginRequiredMixin, BaseGroupTasksView):
 class ToDoMarkDoneView(LoginRequiredMixin, View):
     def post(self, request, pk):
         task = get_object_or_404(ToDoItem, pk=pk, owner=request.user)
+        print(request.user.username)
         task.done = True
         task.save()
         return redirect('todo_list:index')
+
+
+class TelegramProfileView(LoginRequiredMixin, View):
+    template_name = 'todo_list/index.html'
+    login_url = '/login/'
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('todo_list:index') + '?error=not_authenticated')
+
+        try:
+            user = request.user
+
+            tg_profile, created = TelegramProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'verified_code': TelegramProfile.generate_verification_code(TelegramProfile()),
+                    'verification_time': timezone.now() + timezone.timedelta(minutes=5)
+                }
+            )
+
+            if not created:
+                tg_profile.verified_code = TelegramProfile.generate_verification_code(tg_profile)
+                tg_profile.verification_time = timezone.now() + timezone.timedelta(minutes=5)
+                tg_profile.save()
+            else:
+                pass
+            print(f"""
+            User: {user.id} ({user.username})
+            Telegram Profile: {tg_profile.id}
+            Verification Code: {tg_profile.verified_code}
+            Verification Time: {tg_profile.verification_time}
+            Created: {created}
+            """)
+
+            return HttpResponseRedirect(reverse('todo_list:index') + '?success=profile_updated')
+
+        except IntegrityError as e:
+            return HttpResponseRedirect(reverse('todo_list:index') + '?error=profile_creation_failed')
+        except DatabaseError as e:
+            return HttpResponseRedirect(reverse('todo_list:index') + '?error=database_error')
+        except Exception as e:
+            return HttpResponseRedirect(reverse('todo_list:index') + '?error=unexpected_error')

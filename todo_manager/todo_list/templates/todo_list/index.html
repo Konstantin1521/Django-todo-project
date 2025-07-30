@@ -2,14 +2,29 @@
 
 {% block title %}
 TODO List Index
-{%endblock title %}
+{% endblock title %}
 
 {% block body %}
 <h1>ToDO List App!</h1>
-  <div>
+{% if request.GET.success %}
+    <div class="alert alert-success">
+        Профиль Telegram успешно обновлен!
+    </div>
+{% endif %}
+{% if request.GET.error %}
+    <div class="alert alert-danger">
+        Ошибка: {% if request.GET.error == 'profile_creation_failed' %}Не удалось создать профиль{% else %}Неизвестная ошибка{% endif %}
+    </div>
+{% endif %}
+<div>
     <a href="{% url 'todo_list:done' %}">Done ToDo items</a>
     <a href="{% url 'todo_list:create' %}">Create new ToDo items</a>
-    <a href="{% url 'todo_list:createGroup' %}">Create grouo</a>
-  </div>
-  {% include 'todo_list/components/todo_items_list.html' with data=data  %}
+    <a href="{% url 'todo_list:createGroup' %}">Create group</a>
+</div>
+{% include 'todo_list/components/todo_items_list.html' with data=data %}
+
+<form method="post" action="{% url 'todo_list:tg' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-success">Подключить ТГ</button>
+</form>
 {% endblock body %}
