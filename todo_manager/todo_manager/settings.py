@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     'todo_list.apps.TodoListConfig',
     'email_newsletters.apps.EmailNewslettersConfig',
+    'django_celery_results',
 
     'debug_toolbar',
 ]
@@ -150,8 +151,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #         *MIDDLEWARE,
 #     ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = 'amqp://guest_dj:guest_dj@localhost:5672//'
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_PERSISTENT = True
+CELERY_BROKER_CONNECTION_RETRY_OR_STARTUP = True
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 

@@ -13,12 +13,18 @@ services:
 #      options:
 #        max-size: "1m"
 
-  redis:
-    image: redis:7
-    container_name: redis
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbitmq
+    container_name: rabbitmq_dj
     ports:
-      - "6379:6379"
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest_dj"
+      RABBITMQ_DEFAULT_PASS: "guest_dj"
     volumes:
-      - redis_data:/data
+      - rabbitmq-data:/var/lib/rabbitmq_dj
+
 volumes:
-  redis_data:
+  rabbitmq-data:
