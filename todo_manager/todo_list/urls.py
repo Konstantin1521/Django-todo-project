@@ -2,7 +2,6 @@
 from django.urls import path
 
 from . import views_dir
-import todo_list.views_dir.profileView
 
 app_name = "todo_list"
 
@@ -16,6 +15,5 @@ urlpatterns = [
     path('createGroup/', views_dir.todoGroupView.ToDoGroupCreateView.as_view(), name="createGroup"),
     path('create/', views_dir.todoTaskView.TodoItemCreateView.as_view(), name="create"),
     path('edit/<int:pk>/', views_dir.todoGroupView.ToDoMarkDoneView.as_view(), name="done_task"),
-    path('telegram/', views_dir.profileView.TelegramProfileView.as_view(), name="tg"),
-    path('check-code/', views_dir.profileView.TelegramProfileChekCodeView.as_view(), name='code-check'),
+    path('telegram/', views_dir.todoUtilsView.TelegramProfileView.as_view(), name="tg"),
 ]
