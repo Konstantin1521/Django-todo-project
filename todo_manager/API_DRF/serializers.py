@@ -5,7 +5,7 @@ class CodeCheckSerializer(serializers.Serializer):
     tg_id = serializers.IntegerField()
 
     def validate(self, data):
-        from .models import TelegramProfile
+        from todo_list.models import TelegramProfile
         from django.utils import timezone
 
         code = data['verified_code']
