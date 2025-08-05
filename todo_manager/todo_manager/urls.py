@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_views
 from todo_list import views
 
 from debug_toolbar.toolbar import debug_toolbar_urls
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='todo_list/registration/login.html'), name='login'),
@@ -31,6 +31,9 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html"), name="index"),
     path('todos/', include("todo_list.urls")),
     path('admin/', admin.site.urls),
+    path('api/v1/', include('API_DRF.urls', namespace='API_DRF')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
 
 urlpatterns.extend(debug_toolbar_urls())

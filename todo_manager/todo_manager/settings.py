@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_celery_results',
 
     'debug_toolbar',
+    'drf_spectacular',
 ]
 
 LOGIN_REDIRECT_URL = 'index'  # Куда перенаправлять после логина
@@ -157,6 +158,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',  # Для интерфейса в браузере
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 # TESTING = "test" in sys.argv
